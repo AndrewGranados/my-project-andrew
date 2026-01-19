@@ -1,3 +1,4 @@
+/* 
 import Image from "next/image";
 
 export default function Home() {
@@ -14,7 +15,7 @@ export default function Home() {
         />
         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+            Hola Mundo
           </h1>
           <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
             Looking for a starting point or more instructions? Head over to{" "}
@@ -48,7 +49,7 @@ export default function Home() {
               width={16}
               height={16}
             />
-            Deploy Now
+            Guardar
           </a>
           <a
             className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
@@ -61,5 +62,22 @@ export default function Home() {
         </div>
       </main>
     </div>
+  );
+}
+*/
+
+import { createUser } from "./actions/create-user";
+
+export default function Home(){
+  return(
+    <form action={createUser} style={{padding: 20}}>
+      <input name="name" placeholder="Nombre"/>
+      <br />
+      <input name="email" placeholder="Email"/>
+      <br />
+      <input name="password" placeholder="Password" type="password"/>
+      <br />
+      <button type="submit">Crear usuario</button>
+    </form>
   );
 }
