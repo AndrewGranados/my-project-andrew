@@ -1,83 +1,123 @@
-/* 
-import Image from "next/image";
+"use client";
+
+import { createUser } from "./actions/create-user";
+import { useState } from "react";
 
 export default function Home() {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f5f6f8",
+      }}
+    >
+      <form
+        action={createUser}
+        style={{
+          width: 320,
+          padding: 32,
+          borderRadius: 8,
+          backgroundColor: "#ffffff",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+        }}
+      >
+        <h2
+          style={{
+            textAlign: "center",
+            marginBottom: 8,
+            fontSize: 20,
+            fontWeight: 600,
+            color: "#333",
+          }}
+        >
+          Crear usuario
+        </h2>
+
+        {/* Nombre */}
+        <label style={labelStyle}>Nombre</label>
+        <input
+          name="name"
+          placeholder="Ingresa tu nombre"
+          style={inputStyle}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Hola Mundo
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+
+        {/* Email */}
+        <label style={labelStyle}>Correo electrónico</label>
+        <input
+          name="email"
+          placeholder="correo@ejemplo.com"
+          type="email"
+          style={inputStyle}
+        />
+
+        {/* Password */}
+        <label style={labelStyle}>Contraseña</label>
+        <div style={{ position: "relative" }}>
+          <input
+            name="password"
+            placeholder="********"
+            type={showPassword ? "text" : "password"}
+            style={{ ...inputStyle, paddingRight: 40 }}
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: "absolute",
+              right: 10,
+              top: "50%",
+              transform: "translateY(-50%)",
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+              fontSize: 12,
+              color: "#555",
+            }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+            {showPassword ? "Ocultar" : "Ver"}
+          </button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Guardar
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+        <button
+          type="submit"
+          style={{
+            marginTop: 12,
+            padding: "10px 0",
+            borderRadius: 6,
+            border: "none",
+            backgroundColor: "#1f2937",
+            color: "#fff",
+            fontWeight: 500,
+            cursor: "pointer",
+          }}
+        >
+          Crear usuario
+        </button>
+      </form>
     </div>
   );
 }
-*/
 
-import { createUser } from "./actions/create-user";
+const labelStyle: React.CSSProperties = {
+  fontSize: 13,
+  fontWeight: 500,
+  color: "#111",
+};
 
-export default function Home(){
-  return(
-    <form action={createUser} style={{padding: 20}}>
-      <input name="name" placeholder="Nombre"/>
-      <br />
-      <input name="email" placeholder="Email"/>
-      <br />
-      <input name="password" placeholder="Password" type="password"/>
-      <br />
-      <button type="submit">Crear usuario</button>
-    </form>
-  );
-}
+const inputStyle: React.CSSProperties = {
+  padding: "10px 12px",
+  borderRadius: 6,
+  border: "1px solid #d1d5db",
+  fontSize: 14,
+  outline: "none",
+  color: "gray"
+};
