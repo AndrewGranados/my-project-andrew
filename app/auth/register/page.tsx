@@ -3,8 +3,9 @@
 import { createUser } from "../../actions/create-user";
 import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
+import Link from "next/link";
 
-export default function Home() {
+export default function CreateUser() {
   const [showPassword, setShowPassword] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
@@ -45,7 +46,7 @@ export default function Home() {
 
         {/* Nombre */}
         <label style={labelStyle}>Nombre</label>
-        <input name="name" placeholder="Ingresa tu nombre" style={inputStyle} />
+        <input name="name" placeholder="Ingresa tu nombre" style={inputStyle} required/>
 
         {/* Email */}
         <label style={labelStyle}>Correo electrónico</label>
@@ -54,6 +55,7 @@ export default function Home() {
           placeholder="correo@ejemplo.com"
           type="email"
           style={inputStyle}
+          required
         />
 
         {/* Password */}
@@ -64,6 +66,7 @@ export default function Home() {
             placeholder="********"
             type={showPassword ? "text" : "password"}
             style={{ ...inputStyle, paddingRight: 40 }}
+            required
           />
 
           <button
@@ -106,6 +109,24 @@ export default function Home() {
 
         {/* Token oculto para enviar al server */}
         <input type="hidden" name="captchaToken" value={captchaToken ?? ""} />
+
+        {/* Pregunta si ya tiene cuenta, si si que lo mande a iniciar sesión*/}
+        <label>
+          <Link
+            href="/auth/login"
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              color: "#1a73e8", // azul tipo link
+              textDecoration: "underline",
+              cursor: "pointer",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            ¿Ya tienes cuenta? Inicia sesión
+          </Link>
+        </label>
 
         <button
           type="submit"
