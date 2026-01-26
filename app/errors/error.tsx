@@ -1,4 +1,4 @@
-/*
+
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -77,8 +77,8 @@ const secondaryButton: React.CSSProperties = {
   fontWeight: 500,
   cursor: "pointer",
 };
-*/
 
+/*
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
@@ -130,7 +130,7 @@ export default function ErrorDemoPage() {
 
           <button onClick={() => router.push("/")} style={primaryButton}>
             Ir al inicio
-          </button>*/}
+          </button>*//*}/*
         </div>
       </div>
     </div>
