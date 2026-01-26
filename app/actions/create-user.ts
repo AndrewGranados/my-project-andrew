@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { redirect } from "next/navigation";
 
 export async function createUser(formData: FormData): Promise<void> {
   const captchaToken = formData.get("captchaToken") as string;
@@ -44,6 +43,4 @@ export async function createUser(formData: FormData): Promise<void> {
       name,
     },
   });
-
-  // redirect("/success"); // si quieres redirigir después
 }

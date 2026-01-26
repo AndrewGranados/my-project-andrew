@@ -28,12 +28,13 @@ export async function loginUser(formData: FormData){
   }
 
   //Se guarda la sesión en las cookies
-  const cookieStore = await cookies(); // 👈 AQUÍ está la diferencia
+  const cookieStore = await cookies(); 
 
   cookieStore.set("userId", user.id.toString(), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     path: "/",
+    maxAge: 60 * 10,
   });
 
   redirect("/dashboard");
