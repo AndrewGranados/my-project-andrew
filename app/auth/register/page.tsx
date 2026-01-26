@@ -8,6 +8,16 @@ import Link from "next/link";
 export default function CreateUser() {
   const [showPassword, setShowPassword] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+
+  // Validaciones de contraseña
+  const hasMinLength = password.length >= 8;
+  const hasNumber = /\d/.test(password);
+  const hasUppercase = /[A-Z]/.test(password);
+  const isPasswordValid = hasMinLength && hasNumber && hasUppercase;
+
+  const MAX_NAME_LENGTH = 35;
 
   return (
     <div
@@ -46,7 +56,18 @@ export default function CreateUser() {
 
         {/* Nombre */}
         <label style={labelStyle}>Nombre</label>
-        <input name="name" placeholder="Ingresa tu nombre" style={inputStyle} required/>
+        <input
+          name="name"
+          placeholder="Ingresa tu nombre"
+          style={inputStyle}
+          required
+          value={name}
+          maxLength={MAX_NAME_LENGTH}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <span style={{ fontSize: 12, color: "#555", textAlign: "right" }}>
+          {name.length} / {MAX_NAME_LENGTH}
+        </span>
 
         {/* Email */}
         <label style={labelStyle}>Correo electrónico</label>
@@ -67,6 +88,8 @@ export default function CreateUser() {
             type={showPassword ? "text" : "password"}
             style={{ ...inputStyle, paddingRight: 40 }}
             required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <button
@@ -88,6 +111,19 @@ export default function CreateUser() {
           </button>
         </div>
 
+        {/* Indicadores de validación */}
+        <ul style={{ fontSize: 12, marginTop: 6, paddingLeft: 18, color: "#555" }}>
+          <li style={{ color: hasMinLength ? "green" : "red" }}>
+            Mínimo 8 caracteres
+          </li>
+          <li style={{ color: hasNumber ? "green" : "red" }}>
+            Al menos un número
+          </li>
+          <li style={{ color: hasUppercase ? "green" : "red" }}>
+            Al menos una letra mayúscula
+          </li>
+        </ul>
+
         {/* reCAPTCHA */}
         {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
           <div
@@ -107,17 +143,17 @@ export default function CreateUser() {
           </div>
         )}
 
-        {/* Token oculto para enviar al server */}
+        {/* Token oculto */}
         <input type="hidden" name="captchaToken" value={captchaToken ?? ""} />
 
-        {/* Pregunta si ya tiene cuenta, si si que lo mande a iniciar sesión*/}
+        {/* Link login */}
         <label>
           <Link
             href="/auth/login"
             style={{
               fontSize: 13,
               fontWeight: 500,
-              color: "#1a73e8", // azul tipo link
+              color: "#1a73e8",
               textDecoration: "underline",
               cursor: "pointer",
               display: "flex",
@@ -130,16 +166,22 @@ export default function CreateUser() {
 
         <button
           type="submit"
-          disabled={!captchaToken}
+          disabled={!captchaToken || !isPasswordValid || name.length === 0}
           style={{
             marginTop: 12,
             padding: "10px 0",
             borderRadius: 6,
             border: "none",
-            backgroundColor: !captchaToken ? "#9ca3af" : "#1f2937",
+            backgroundColor:
+              !captchaToken || !isPasswordValid || name.length === 0
+                ? "#9ca3af"
+                : "#1f2937",
             color: "#fff",
             fontWeight: 500,
-            cursor: !captchaToken ? "not-allowed" : "pointer",
+            cursor:
+              !captchaToken || !isPasswordValid || name.length === 0
+                ? "not-allowed"
+                : "pointer",
           }}
         >
           Crear usuario
