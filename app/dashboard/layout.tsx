@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { usePathname } from "next/navigation";
 import { logout } from "@/app/actions/logout";
@@ -28,7 +28,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <NavItem href="/dashboard">🏠 Inicio</NavItem>
         <NavItem href="/dashboard/profile">👤 Perfil</NavItem>
         <NavItem href="/dashboard/projects">📁 Proyectos</NavItem>
-        <NavItem href="/dashboard/settings">⚙️ Configuración</NavItem>
+        {/*<NavItem href="/dashboard/settings">⚙️ Configuración</NavItem>*/}
+        <SettingsMenu />
+
 
         <form action={logout} style={{ marginTop: "auto" }}>
           <button
@@ -79,6 +81,81 @@ function NavItem({ href, children }: { href: string; children: ReactNode }) {
       }}
       onMouseLeave={(e) => {
         if (!isActive) e.currentTarget.style.background = "transparent";
+      }}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function SettingsMenu() {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = pathname.startsWith("/dashboard/settings");
+
+  return (
+    <div
+      style={{ position: "relative" }}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <div
+        style={{
+          padding: "10px 12px",
+          borderRadius: 6,
+          cursor: "pointer",
+          color: isActive ? "#2563eb" : "#111",
+          background: isActive ? "#eff6ff" : "transparent",
+          fontWeight: isActive ? 600 : 400,
+          fontSize: 14,
+        }}
+      >
+        ⚙️ Configuración
+      </div>
+
+      {open && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: "100%",
+            marginLeft: 1,
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 8,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            width: 180,
+            zIndex: 50,
+            padding: 8,
+          }}
+        >
+          {/*<SubItem href="/dashboard/settings/profile">Perfil</SubItem>*/}
+          <SubItem href="/dashboard/settings/">Configuración</SubItem>
+          <SubItem href="/dashboard/settings/security">Seguridad</SubItem>
+          <SubItem href="/dashboard/settings/preferences">Preferencias</SubItem>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+function SubItem({ href, children }: { href: string; children: React.ReactNode }) {
+  const pathname = usePathname();
+  const active = pathname === href;
+
+  return (
+    <Link
+      href={href}
+      style={{
+        display: "block",
+        padding: "8px 10px",
+        borderRadius: 6,
+        textDecoration: "none",
+        color: active ? "#2563eb" : "#111",
+        background: active ? "#eff6ff" : "transparent",
+        fontSize: 13,
       }}
     >
       {children}
