@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -71,3 +71,4 @@ const secondaryButton: React.CSSProperties = {
   fontWeight: 500,
   cursor: "pointer",
 };
+*/

@@ -1,4 +1,4 @@
-/*
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -82,7 +82,7 @@ export async function createUser(formData: FormData): Promise<void> {
     redirect("/errors");
   }
 }
-*/
+/*
 
 "use server";
 
@@ -134,9 +134,7 @@ export async function createUser(formData: FormData): Promise<void> {
     const hasUppercase = /[A-Z]/.test(password);
 
     if (!hasMinLength || !hasNumber || !hasUppercase) {
-      throw new Error(
-        "La contraseña no cumple con los requisitos de seguridad",
-      );
+      throw new Error("La contraseña no cumple con los requisitos de seguridad");
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -156,15 +154,14 @@ export async function createUser(formData: FormData): Promise<void> {
         name,
       },
     });
-  } catch (error: unknown) {
+
+  } catch (error: any) {
     console.error("Error al crear usuario:", error);
 
-    let message = "Ocurrió un error inesperado al crear el usuario";
-
-    if (error instanceof Error) {
-      message = error.message;
-    }
+    const message =
+      error?.message || "Ocurrió un error inesperado al crear el usuario";
 
     redirect(`/errors?msg=${encodeURIComponent(message)}`);
   }
 }
+*/

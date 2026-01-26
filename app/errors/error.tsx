@@ -78,10 +78,8 @@ const secondaryButton: React.CSSProperties = {
   cursor: "pointer",
 };
 */
-/*
-"use client";
-export const dynamic = "force-dynamic";
 
+"use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -132,7 +130,7 @@ export default function ErrorDemoPage() {
 
           <button onClick={() => router.push("/")} style={primaryButton}>
             Ir al inicio
-          </button>*//*}
+          </button>*/}
         </div>
       </div>
     </div>
@@ -158,16 +156,4 @@ const secondaryButton: React.CSSProperties = {
   fontWeight: 500,
   cursor: "pointer",
 };
-*//*
-import { Suspense } from "react";
-import ErrorClient from "../errors/errorClient";
-
-export const dynamic = "force-dynamic";
-
-export default function ErrorDemoPage() {
-  return (
-    <Suspense fallback={<div>Cargando error...</div>}>
-      <ErrorClient />
-    </Suspense>
-  );
-}*/
+*/
