@@ -158,7 +158,7 @@ const secondaryButton: React.CSSProperties = {
   fontWeight: 500,
   cursor: "pointer",
 };
-*/
+*//*
 import { Suspense } from "react";
 import ErrorClient from "../errors/errorClient";
 
@@ -170,4 +170,4 @@ export default function ErrorDemoPage() {
       <ErrorClient />
     </Suspense>
   );
-}
+}*/
