@@ -79,7 +79,7 @@ export async function createUser(formData: FormData): Promise<void> {
 
   } catch (error) {
     console.error("Error al crear usuario:", error);
-    redirect("/errors");
+    redirect("/errors/");
   }
 }
 /*
