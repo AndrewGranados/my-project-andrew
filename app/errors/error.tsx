@@ -129,18 +129,18 @@ export default function ErrorDemoPage() {
             Regresar
           </button>
 
-          <button
+          {/*<button
             onClick={() => router.push("/")}
             style={primaryButton}
           >
             Ir al inicio
-          </button>
+          </button>*/}
         </div>
       </div>
     </div>
   );
 }
-
+/*
 const primaryButton: React.CSSProperties = {
   padding: "10px 16px",
   borderRadius: 6,
@@ -150,7 +150,7 @@ const primaryButton: React.CSSProperties = {
   fontWeight: 500,
   cursor: "pointer",
 };
-
+*/
 const secondaryButton: React.CSSProperties = {
   padding: "10px 16px",
   borderRadius: 6,
