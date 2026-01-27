@@ -158,7 +158,7 @@ export async function createUser(formData: FormData): Promise<void> {
       "code" in error &&
       (error as { code: string }).code === "P2002"
     ) {
-      redirect("/errors?message=Este correo ya está registrado");
+      redirect("/errors?message=Este correo ya esta registrado");
     }
 
     redirect("/errors?message=Error al crear el usuario");

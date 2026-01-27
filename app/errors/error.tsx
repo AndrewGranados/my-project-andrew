@@ -124,12 +124,13 @@ export default function ErrorDemoPage() {
         <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
           <button
             onClick={() => router.back()}
-            style={secondaryButton}
+            style={primaryButton}
           >
             Regresar
           </button>
 
-          {/*<button
+          {/*
+          <button
             onClick={() => router.push("/")}
             style={primaryButton}
           >
@@ -140,7 +141,7 @@ export default function ErrorDemoPage() {
     </div>
   );
 }
-/*
+
 const primaryButton: React.CSSProperties = {
   padding: "10px 16px",
   borderRadius: 6,
@@ -149,14 +150,15 @@ const primaryButton: React.CSSProperties = {
   color: "#fff",
   fontWeight: 500,
   cursor: "pointer",
-};
-*/
-const secondaryButton: React.CSSProperties = {
-  padding: "10px 16px",
-  borderRadius: 6,
-  border: "1px solid #d1d5db",
-  backgroundColor: "#fff",
-  color: "#111",
-  fontWeight: 500,
-  cursor: "pointer",
-};
+  };
+  /*
+  const secondaryButton: React.CSSProperties = {
+    padding: "10px 16px",
+    borderRadius: 6,
+    border: "1px solid #d1d5db",
+    backgroundColor: "#fff",
+    color: "#111",
+    fontWeight: 500,
+    cursor: "pointer",
+  };
+  */
