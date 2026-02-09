@@ -30,6 +30,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <NavItem href="/dashboard/projects">📁 Proyectos</NavItem>
         {/*<NavItem href="/dashboard/settings">⚙️ Configuración</NavItem>*/}
         <SettingsMenu />
+        <NavItem href="/dashboard/settings">⚙️ Configuración</NavItem>
 
 
         <form action={logout} style={{ marginTop: "auto" }}>

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 //import { createDashboardBanner } from "../actions/create-dashboard-banner";
 import UploadDashboardBanner from "../components/UploadDashboardBanner";
 import DashboardCarousel from '../components/DashboardCarousel';
+import DashboardBannerList from "../components/DashboardBannerList";
 
 
 export default async function DashboardPage() {
@@ -36,6 +37,10 @@ export default async function DashboardPage() {
       <UploadDashboardBanner />
 
       <DashboardCarousel banners={banners} height={320} width={500}/>
+
+      {/*
+      <DashboardBannerList banners={banners}/>
+      */}
     </div>
   );
 }
