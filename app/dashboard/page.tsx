@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createDashboardBanner } from "../actions/create-dashboard-banner";
+//import { createDashboardBanner } from "../actions/create-dashboard-banner";
+import UploadDashboardBanner from "../components/UploadDashboardBanner";
 import DashboardCarousel from '../components/DashboardCarousel';
 
 
@@ -28,29 +29,13 @@ export default async function DashboardPage() {
     orderBy: { order: "asc" },
   });
 
-  /*async function action(formData: FormData){
-    "use server";
-
-    const file = formData.get("image") as File;
-
-    if (!file || file.size === 0) return;
-
-    const result = await uploadDashboardImage(file);
-
-    console.log("resultado cloudinary ",result);
-  }*/
-
   return (
     <div>
       <h1 style={{ fontSize: 22, fontWeight: 600 }}>Inicio hola</h1>
+      
+      <UploadDashboardBanner />
 
-      <form action={createDashboardBanner}>
-        <input type="file" name="image" accept="image/*" />
-        <button type="submit">Subir imagen</button>
-      </form>
-
-      <DashboardCarousel banners={banners} />
-
+      <DashboardCarousel banners={banners} height={320} width={500}/>
     </div>
   );
 }

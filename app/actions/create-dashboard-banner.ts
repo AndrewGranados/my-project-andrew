@@ -2,11 +2,17 @@
 
 import { uploadDashboardImage } from "./upload-dashboard-image";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
-export async function createDashboardBanner(formData: FormData) {
-  const file = formData.get("image") as File;
+export async function createDashboardBanner(
+  prevState: { success: boolean},
+  formData: FormData
+) {
+    const file = formData.get("image") as File;
 
-  if(!file || file.size === 0) return;
+  if(!file || file.size === 0) {
+    return { success: false };
+  }
 
   const uploadResult = await uploadDashboardImage(file);
 
@@ -17,4 +23,8 @@ export async function createDashboardBanner(formData: FormData) {
       active: true,
     },
   });
+
+  revalidatePath("/dashboard");
+
+  return { success: true }
 }
