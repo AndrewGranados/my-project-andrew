@@ -23,9 +23,19 @@ model User {
 
 model DashboardBanner {
   id        String   @id @default(uuid())
-  imageUrl String
+  imageUrl  String
   title     String?
   order     Int      @default(0)
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
+}
+
+model Employee{
+  id         String    @default(uuid()) @db.Uuid
+  firstName  String
+  lastName   String
+  salary     Decimal   @db.Decimal(10, 2)
+  phone      String
+  email      String    @unique
+  createdAt  DateTime  @default(now())
 }

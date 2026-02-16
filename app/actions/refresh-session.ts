@@ -11,6 +11,6 @@ export async function refreshSession() {
   cookieStore.set("userId", userId.value, {
     httpOnly: true,
     path: "/",
-    maxAge: 60 * 10, // renueva 10 min
+    maxAge: 60 * 20, // renueva 10 min
   });
 }

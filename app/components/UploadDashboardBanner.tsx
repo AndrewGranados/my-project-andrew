@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useFormState } from "react-dom";
+import { useEffect, useState, useRef, useActionState } from "react";
+//import { useFormState } from "react-dom";
 import { createDashboardBanner } from "../actions/create-dashboard-banner";
+import Image from "next/image";
 
 const initialState = { success: false };
 
 export default function UploadDashboardBanner() {
-  const [state, formAction] = useFormState(createDashboardBanner, initialState);
+  //const [state, formAction] = useFormState(createDashboardBanner, initialState);
+  const [state, formAction] = useActionState(
+    createDashboardBanner,
+    initialState,
+  );
 
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -29,6 +34,15 @@ export default function UploadDashboardBanner() {
 
     prevSuccess.current = state.success;
   }, [state.success]);
+
+  useEffect(() => {
+  return () => {
+    if (preview) {
+      URL.revokeObjectURL(preview);
+    }
+  };
+}, [preview]);
+
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -75,14 +89,32 @@ export default function UploadDashboardBanner() {
       {preview && (
         <div
           style={{
+            //position: "relative",
+            //height: 180,
+
             borderRadius: 10,
             overflow: "hidden",
             border: "1px solid #e5e7eb",
           }}
         >
-          <img
+          {/*
+          <Image
             src={preview}
             alt="preview"
+            fill
+            style={{
+              width: "100%",
+              height: 180,
+              objectFit: "cover",
+              display: "block",
+            }}
+          />
+              */}
+          <Image
+            src={preview}
+            alt="preview"
+            width={420}
+            height={180}
             style={{
               width: "100%",
               height: 180,
@@ -98,6 +130,7 @@ export default function UploadDashboardBanner() {
         disabled={!preview}
         style={{
           padding: "8px 14px",
+          marginBottom: "14px",
           borderRadius: 8,
           border: "none",
           background: preview ? "#111" : "#9ca3af",
