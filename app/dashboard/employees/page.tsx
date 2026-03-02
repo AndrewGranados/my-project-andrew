@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import Swal from "sweetalert2";
 interface Employee {
   id: string;
   firstName: string;
@@ -21,6 +21,23 @@ export default function EmployeesPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
+  // ====== paginado ======
+  const pageSize = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageInput, setPageInput] = useState("1");
+
+  const totalPages = Math.ceil(data.length / pageSize);
+
+  const paginatedData = data.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
+  // ====== cargar al abrir la página ======
+  useEffect(() => {
+    fetchAllEmployees();
+  }, []);
 
   const fetchEmployees = async () => {
     try {
@@ -41,6 +58,10 @@ export default function EmployeesPage() {
 
       const json = await res.json();
       setData(json);
+
+      // reiniciar paginado
+      setCurrentPage(1);
+      setPageInput("1");
     } catch (error) {
       console.error("Fetch error:", error);
     } finally {
@@ -62,8 +83,62 @@ export default function EmployeesPage() {
 
       const json = await res.json();
       setData(json);
+
+      // reiniciar paginado
+      setCurrentPage(1);
+      setPageInput("1");
     } catch (error) {
       console.error("Fetch: error: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  //------------------ Botón de eliminar ------------------
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: "¿Eliminar empleado?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#F44336",
+      cancelButtonColor: "#6b7280",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(`/api/employees/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        await Swal.fire({
+          title: "Error",
+          text: "No se pudo eliminar el empleado",
+          icon: "error",
+        });
+        return;
+      }
+
+      setData((prev) => prev.filter((e) => e.id !== id));
+
+      await Swal.fire({
+        title: "Eliminado",
+        text: "El empleado fue eliminado correctamente",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      await Swal.fire({
+        title: "Error",
+        text: "Ocurrió un error inesperado",
+        icon: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -107,6 +182,7 @@ export default function EmployeesPage() {
               Buscar
             </button>
 
+            {/* 
             <button
               style={secondaryButton}
               onClick={fetchAllEmployees}
@@ -114,7 +190,24 @@ export default function EmployeesPage() {
             >
               Obtener todos
             </button>
+            */}
           </div>
+        </div>
+
+        {/* Acción */}
+        <div
+          style={{
+            marginTop: 16,
+            display: "flex",
+            justifyContent: "flex-start",
+          }}
+        >
+          <button
+            style={createButton}
+            onClick={() => router.push("/dashboard/employees/register")}
+          >
+            Registrar nuevo empleado
+          </button>
         </div>
 
         {/* Tabla */}
@@ -126,6 +219,7 @@ export default function EmployeesPage() {
                 <th style={th}>Email</th>
                 <th style={th}>Teléfono</th>
                 <th style={th}>Salario</th>
+                <th style={th}>Acciones</th>
               </tr>
             </thead>
 
@@ -147,7 +241,7 @@ export default function EmployeesPage() {
               )}
 
               {!loading &&
-                data.map((emp) => (
+                paginatedData.map((emp) => (
                   <tr key={emp.id} style={row}>
                     <td style={td}>
                       {emp.firstName} {emp.lastName}
@@ -155,27 +249,119 @@ export default function EmployeesPage() {
                     <td style={td}>{emp.email}</td>
                     <td style={td}>{emp.phone ?? "-"}</td>
                     <td style={td}>${emp.salary}</td>
+                    <td>
+                      <button
+                        style={updateButton}
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/employees/update?id=${emp.id}`,
+                          )
+                        }
+                      >
+                        Editar
+                      </button>
+                      <button
+                        style={deleteButton}
+                        onClick={() => handleDelete(emp.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
                   </tr>
                 ))}
             </tbody>
           </table>
         </div>
 
-        {/* Acción */}
-        <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}>
-          <button
-            style={primaryButton}
-            onClick={() => router.push("/dashboard/employees/register")}
+        {/* Paginado */}
+        {data.length > 0 && (
+          <div
+            style={{
+              marginTop: 16,
+              display: "flex",
+              justifyContent: "center",
+            }}
           >
-            Registrar nuevo empleado
-          </button>
-        </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                fontSize: 14,
+              }}
+            >
+              {/* < */}
+              <button
+                style={minimalButton}
+                disabled={currentPage === 1}
+                onClick={() => {
+                  const p = currentPage - 1;
+                  setCurrentPage(p);
+                  setPageInput(String(p));
+                }}
+              >
+                {"<"}
+              </button>
+
+              {/* número editable */}
+              <input
+                type="number"
+                min={1}
+                max={totalPages}
+                value={pageInput}
+                onChange={(e) => setPageInput(e.target.value)}
+                onBlur={() => {
+                  const page = Number(pageInput);
+                  if (page >= 1 && page <= totalPages) {
+                    setCurrentPage(page);
+                  } else {
+                    setPageInput(String(currentPage));
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const page = Number(pageInput);
+                    if (page >= 1 && page <= totalPages) {
+                      setCurrentPage(page);
+                    } else {
+                      setPageInput(String(currentPage));
+                    }
+                  }
+                }}
+                style={{
+                  width: 40,
+                  textAlign: "center",
+                  border: "none",
+                  borderBottom: "1px solid #d1d5db",
+                  outline: "none",
+                  fontSize: 14,
+                  padding: "2px 4px",
+                }}
+              />
+
+              <span>/ {totalPages}</span>
+
+              {/* > */}
+              <button
+                style={minimalButton}
+                disabled={currentPage === totalPages}
+                onClick={() => {
+                  const p = currentPage + 1;
+                  setCurrentPage(p);
+                  setPageInput(String(p));
+                }}
+              >
+                {">"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-/* ===== estilos copiados del registro ===== */
+/* ===== estilos ===== */
 
 const pageWrapper: React.CSSProperties = {
   minHeight: "100vh",
@@ -251,12 +437,33 @@ const primaryButton: React.CSSProperties = {
   cursor: "pointer",
 };
 
-const secondaryButton: React.CSSProperties = {
+const createButton: React.CSSProperties = {
   padding: "10px 16px",
   borderRadius: 6,
   border: "1px solid #d1d5db",
-  backgroundColor: "#ffffff",
-  color: "#111",
+  backgroundColor: "#4CAF50",
+  color: "white",
+  fontWeight: 500,
+  cursor: "pointer",
+};
+
+const updateButton: React.CSSProperties = {
+  padding: "3px 7px",
+  margin: "5px",
+  borderRadius: 6,
+  border: "1px solid #FFC107",
+  backgroundColor: "#FFC107",
+  color: "white",
+  fontWeight: 500,
+  cursor: "pointer",
+};
+
+const deleteButton: React.CSSProperties = {
+  padding: "3px 7px",
+  borderRadius: 6,
+  border: "1px solid #F44336",
+  backgroundColor: "#F44336",
+  color: "white",
   fontWeight: 500,
   cursor: "pointer",
 };
@@ -290,4 +497,13 @@ const emptyState: React.CSSProperties = {
   padding: 16,
   fontSize: 13,
   color: "#555",
+};
+
+const minimalButton: React.CSSProperties = {
+  border: "none",
+  background: "transparent",
+  cursor: "pointer",
+  fontSize: 16,
+  padding: "2px 6px",
+  color: "#111",
 };

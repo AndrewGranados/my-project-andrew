@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const MAX_NAME_LENGTH = 20;
+
 export default function NewEmployees() {
   const router = useRouter();
 
@@ -26,6 +28,12 @@ export default function NewEmployees() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validación extra (igual que en usuarios, pero aplicada a teléfono)
+    if (form.phone.trim().length !== 10) {
+      alert("El teléfono debe tener exactamente 10 dígitos");
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -36,17 +44,24 @@ export default function NewEmployees() {
           firstName: form.firstName.trim(),
           lastName: form.lastName.trim(),
           salary: Number(form.salary),
-          phone: form.phone,
+          phone: form.phone.trim(),
           email: form.email.trim(),
         }),
       });
-
-      const text = await res.text();
 
       if (!res.ok) {
         alert("Error al registrar empleado");
         return;
       }
+
+      //limpiar formulario
+      setForm({
+        firstName: "",
+        lastName: "",
+        salary: "",
+        phone: "",
+        email: "",
+      });
 
       alert("Se insertó el empleado con éxito");
     } catch (err) {
@@ -90,7 +105,6 @@ export default function NewEmployees() {
           Registrar empleado
         </h2>
 
-        {/* GRID 2 COLUMNAS */}
         <div
           style={{
             display: "grid",
@@ -107,6 +121,7 @@ export default function NewEmployees() {
               value={form.firstName}
               onChange={handleChange}
               required
+              maxLength={MAX_NAME_LENGTH}
               pattern=".*\S.*"
               title="No puede estar vacío ni contener solo espacios"
               style={inputStyle}
@@ -122,6 +137,7 @@ export default function NewEmployees() {
               value={form.lastName}
               onChange={handleChange}
               required
+              maxLength={MAX_NAME_LENGTH}
               pattern=".*\S.*"
               title="No puede estar vacío ni contener solo espacios"
               style={inputStyle}
@@ -148,13 +164,14 @@ export default function NewEmployees() {
             <input
               name="phone"
               type="number"
-              placeholder="Solo números"
+              placeholder="10 dígitos"
               value={form.phone}
               onChange={handleChange}
               required
               inputMode="numeric"
-              pattern="[0-9]+"
-              title="Solo se permiten números"
+              pattern="[0-9]{10}"
+              maxLength={10}
+              title="Debe contener exactamente 10 números"
               style={inputStyle}
             />
           </div>
@@ -170,7 +187,9 @@ export default function NewEmployees() {
               onChange={handleChange}
               required
               min="1"
+              max="1000000"
               step="1"
+              title="Debe ser un número entero mayor a 0"
               style={inputStyle}
             />
           </div>

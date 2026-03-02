@@ -34,11 +34,13 @@ export default async function DashboardPage() {
     <div>
       <h1 style={{ fontSize: 22, fontWeight: 600 }}>Inicio hola</h1>
       
-      <UploadDashboardBanner />
 
-      <DashboardCarousel banners={banners} height={320} width={500}/>
 
       {/*
+      <UploadDashboardBanner />
+      
+      <DashboardCarousel banners={banners} height={320} width={500}/>
+      
       <DashboardBannerList banners={banners}/>
       */}
     </div>
