@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 const MAX_NAME_LENGTH = 20;
 
@@ -19,18 +20,34 @@ export default function NewEmployees() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // Limitar teléfono a solo números y máximo 10
+    if (name === "phone") {
+      const onlyNumbers = value.replace(/\D/g, "").slice(0, 10);
+
+      setForm({
+        ...form,
+        phone: onlyNumbers,
+      });
+      return;
+    }
+
     setForm({
       ...form,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación extra (igual que en usuarios, pero aplicada a teléfono)
     if (form.phone.trim().length !== 10) {
-      alert("El teléfono debe tener exactamente 10 dígitos");
+      await Swal.fire({
+        title: "Datos inválidos",
+        text: "El teléfono debe tener exactamente 10 dígitos",
+        icon: "warning",
+      });
       return;
     }
 
@@ -50,11 +67,18 @@ export default function NewEmployees() {
       });
 
       if (!res.ok) {
-        alert("Error al registrar empleado");
-        return;
+        throw new Error("Error al registrar empleado");
       }
 
-      //limpiar formulario
+      await Swal.fire({
+        title: "Empleado registrado",
+        text: "El empleado se registró correctamente",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      // limpiar formulario
       setForm({
         firstName: "",
         lastName: "",
@@ -62,10 +86,14 @@ export default function NewEmployees() {
         phone: "",
         email: "",
       });
-
-      alert("Se insertó el empleado con éxito");
     } catch (err) {
       console.error(err);
+
+      await Swal.fire({
+        title: "Error",
+        text: "No se pudo registrar el empleado",
+        icon: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -163,14 +191,13 @@ export default function NewEmployees() {
             <label style={labelStyle}>Teléfono</label>
             <input
               name="phone"
-              type="number"
+              type="text"
               placeholder="10 dígitos"
               value={form.phone}
               onChange={handleChange}
               required
               inputMode="numeric"
               pattern="[0-9]{10}"
-              maxLength={10}
               title="Debe contener exactamente 10 números"
               style={inputStyle}
             />

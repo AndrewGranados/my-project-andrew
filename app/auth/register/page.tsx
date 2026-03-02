@@ -4,6 +4,7 @@ import { createUser } from "../../actions/create-user";
 import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import Link from "next/link";
+import Swal from "sweetalert2";
 
 export default function CreateUser() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,8 +22,42 @@ export default function CreateUser() {
     hasMinLength && hasNumber && hasUppercase && hasNotOnlySpaces;
 
   const MAX_NAME_LENGTH = 35;
-
   const isNameValid = name.trim().length > 0;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!captchaToken || !isPasswordValid || !isNameValid) return;
+
+    try {
+      const formData = new FormData(e.currentTarget);
+
+      await createUser(formData);
+
+      await Swal.fire({
+        title: "Usuario creado",
+        text: "El usuario se registró correctamente",
+        icon: "success",
+        timer: 1600,
+        showConfirmButton: false,
+      });
+
+      setName("");
+      setPassword("");
+      setCaptchaToken(null);
+
+      e.currentTarget.reset();
+
+    } catch (error) {
+      console.error(error);
+
+      await Swal.fire({
+        title: "Error",
+        text: "No se pudo crear el usuario",
+        icon: "error",
+      });
+    }
+  };
 
   return (
     <div
@@ -35,7 +70,7 @@ export default function CreateUser() {
       }}
     >
       <form
-        action={createUser}
+        onSubmit={handleSubmit}
         style={{
           width: 520,
           padding: 32,
@@ -91,7 +126,7 @@ export default function CreateUser() {
           />
         </div>
 
-        {/* Password (2 columnas) */}
+        {/* Password */}
         <div style={{ ...fieldWrapper, gridColumn: "1 / -1" }}>
           <label style={labelStyle}>Contraseña</label>
 
@@ -128,7 +163,7 @@ export default function CreateUser() {
           </div>
         </div>
 
-        {/* Indicadores (2 columnas) */}
+        {/* Indicadores */}
         <ul
           style={{
             gridColumn: "1 / -1",
@@ -149,7 +184,7 @@ export default function CreateUser() {
           </li>
         </ul>
 
-        {/* reCAPTCHA (2 columnas) */}
+        {/* reCAPTCHA */}
         {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
           <div
             style={{
@@ -169,10 +204,8 @@ export default function CreateUser() {
           </div>
         )}
 
-        {/* Token oculto */}
         <input type="hidden" name="captchaToken" value={captchaToken ?? ""} />
 
-        {/* Link login (2 columnas) */}
         <div style={{ gridColumn: "1 / -1" }}>
           <Link
             href="/auth/login"
@@ -190,7 +223,6 @@ export default function CreateUser() {
           </Link>
         </div>
 
-        {/* Botón (2 columnas) */}
         <button
           type="submit"
           disabled={!captchaToken || !isPasswordValid || !isNameValid}
