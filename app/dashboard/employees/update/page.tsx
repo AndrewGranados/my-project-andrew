@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
+const MAX_NAME_LENGTH = 20;
+
 type Form = {
   firstName: string;
   lastName: string;
@@ -64,17 +66,40 @@ export default function UpdateEmployeePage() {
     loadEmployee();
   }, [id]);
 
-  // ================= cambios =================
+  // ================= cambios (con mismas restricciones que register) =================
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // Limitar teléfono a solo números y máximo 10
+    if (name === "phone") {
+      const onlyNumbers = value.replace(/\D/g, "").slice(0, 10);
+
+      setForm({
+        ...form,
+        phone: onlyNumbers,
+      });
+      return;
+    }
+
     setForm({
       ...form,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
   // ================= guardar =================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // misma validación que en register
+    if (form.phone.trim().length !== 10) {
+      await Swal.fire({
+        title: "Datos inválidos",
+        text: "El teléfono debe tener exactamente 10 dígitos",
+        icon: "warning",
+      });
+      return;
+    }
 
     try {
       setSaving(true);
@@ -86,7 +111,7 @@ export default function UpdateEmployeePage() {
           firstName: form.firstName.trim(),
           lastName: form.lastName.trim(),
           salary: Number(form.salary),
-          phone: form.phone,
+          phone: form.phone.trim(),
           email: form.email.trim(),
         }),
       });
@@ -122,7 +147,7 @@ export default function UpdateEmployeePage() {
     }
   };
 
-  // ================= eliminar desde update =================
+  // ================= eliminar =================
   const handleDelete = async () => {
     const result = await Swal.fire({
       title: "¿Eliminar empleado?",
@@ -216,6 +241,7 @@ export default function UpdateEmployeePage() {
             gap: 16,
           }}
         >
+          {/* Nombre */}
           <div style={fieldWrapper}>
             <label style={labelStyle}>Nombre</label>
             <input
@@ -223,10 +249,14 @@ export default function UpdateEmployeePage() {
               value={form.firstName}
               onChange={handleChange}
               required
+              maxLength={MAX_NAME_LENGTH}
+              pattern=".*\S.*"
+              title="No puede estar vacío ni contener solo espacios"
               style={inputStyle}
             />
           </div>
 
+          {/* Apellidos */}
           <div style={fieldWrapper}>
             <label style={labelStyle}>Apellidos</label>
             <input
@@ -234,10 +264,14 @@ export default function UpdateEmployeePage() {
               value={form.lastName}
               onChange={handleChange}
               required
+              maxLength={MAX_NAME_LENGTH}
+              pattern=".*\S.*"
+              title="No puede estar vacío ni contener solo espacios"
               style={inputStyle}
             />
           </div>
 
+          {/* Correo */}
           <div style={fieldWrapper}>
             <label style={labelStyle}>Correo electrónico</label>
             <input
@@ -250,17 +284,23 @@ export default function UpdateEmployeePage() {
             />
           </div>
 
+          {/* Teléfono */}
           <div style={fieldWrapper}>
             <label style={labelStyle}>Teléfono</label>
             <input
               name="phone"
+              type="text"
               value={form.phone}
               onChange={handleChange}
               required
+              inputMode="numeric"
+              pattern="[0-9]{10}"
+              title="Debe contener exactamente 10 números"
               style={inputStyle}
             />
           </div>
 
+          {/* Salario */}
           <div style={fieldWrapper}>
             <label style={labelStyle}>Salario</label>
             <input
@@ -269,6 +309,10 @@ export default function UpdateEmployeePage() {
               value={form.salary}
               onChange={handleChange}
               required
+              min="1"
+              max="1000000"
+              step="1"
+              title="Debe ser un número entero mayor a 0"
               style={inputStyle}
             />
           </div>
@@ -299,7 +343,7 @@ export default function UpdateEmployeePage() {
   );
 }
 
-/* estilos (reutilizados de tu archivo) */
+/* estilos */
 
 const labelStyle: React.CSSProperties = {
   fontSize: 13,
